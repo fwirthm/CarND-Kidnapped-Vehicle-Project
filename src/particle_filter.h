@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 #include "helper_functions.h"
+//#include "multiv_gauss.h"
 
 struct Particle {
   int id;
@@ -105,11 +106,17 @@ class ParticleFilter {
   /**
    * Used for obtaining debugging information related to particles.
    */
+  
+  double multiv_prob(double sig_x, double sig_y, double x_obs, double y_obs,
+                   double mu_x, double mu_y);
+  
   std::string getAssociations(Particle best);
   std::string getSenseCoord(Particle best, std::string coord);
 
   // Set of current particles
   std::vector<Particle> particles;
+  
+  Particle best_particle_;
 
  private:
   // Number of particles to draw
@@ -119,7 +126,8 @@ class ParticleFilter {
   bool is_initialized;
   
   // Vector of weights of all particles
-  std::vector<double> weights; 
+  std::vector<double> weights;
+ 
 };
 
 #endif  // PARTICLE_FILTER_H_

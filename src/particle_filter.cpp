@@ -56,7 +56,12 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
     sample_theta = dist_theta(gen);
     
     //Particle particle = {i, sample_x, sample_y, sample_theta, 1./100.};
-    Particle particle = {i, sample_x, sample_y, sample_theta, 1.};
+    Particle particle;
+    particle.id = i;
+    particle.x = sample_x;
+    particle.y = sample_y;
+    particle.theta = sample_theta;
+    particle.weight = 1.;
     
     particles.push_back(particle);
     
@@ -93,9 +98,17 @@ void ParticleFilter::prediction(double delta_t, double std_pos[],
     double yaw = yaw_rate * delta_t;
     
     
-    x = x + ((velocity/yaw_rate)*(sin(theta+yaw)-sin(theta)));
-    y = y + ((velocity/yaw_rate)*(-cos(theta+yaw)+cos(theta)));
-    theta = theta + yaw;
+    
+    if (fabs(yaw_rate) < 0.01 ) { // Drive stright, when yaw not change
+      x += velocity * delta_t * cos(theta);
+      y += velocity * delta_t * sin(theta);
+    } 
+    else 
+    {
+      x += ((velocity/yaw_rate)*(sin(theta+yaw)-sin(theta)));
+      y += ((velocity/yaw_rate)*(-cos(theta+yaw)+cos(theta)));
+      theta += yaw;
+    }
     
     double sample_x = x+dist_x(gen);
     double sample_y = y+dist_y(gen);
@@ -341,8 +354,8 @@ void ParticleFilter::resample() {
   }**/
   
   
-  
   //std::cout << "ParticleFilter::resample" << std::endl;
+  
 }
 
 void ParticleFilter::SetAssociations(Particle& particle, 
